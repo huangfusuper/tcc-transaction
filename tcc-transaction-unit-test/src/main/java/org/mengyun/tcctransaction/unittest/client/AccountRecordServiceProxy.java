@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.*;
 
 /**
- * Created by changmingxie on 12/3/15.
+ *
+ * @author changmingxie
+ * @date 12/3/15
  */
 @Service
 public class AccountRecordServiceProxy {

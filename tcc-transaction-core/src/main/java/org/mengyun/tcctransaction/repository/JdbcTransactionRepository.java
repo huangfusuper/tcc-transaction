@@ -56,6 +56,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         return dataSource;
     }
 
+    @Override
     protected int doCreate(Transaction transaction) {
 
         Connection connection = null;
@@ -298,10 +299,10 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         }
     }
 
-
     protected Connection getConnection() {
         try {
-            return this.dataSource.getConnection();
+            Connection connection = this.dataSource.getConnection();
+            return connection;
         } catch (SQLException e) {
             throw new TransactionIOException(e);
         }

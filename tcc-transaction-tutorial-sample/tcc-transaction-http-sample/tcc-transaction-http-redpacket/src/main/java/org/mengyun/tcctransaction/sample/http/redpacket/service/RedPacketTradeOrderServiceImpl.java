@@ -23,22 +23,27 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
 
     @Autowired
     RedPacketAccountRepository redPacketAccountRepository;
-
     @Autowired
     TradeOrderRepository tradeOrderRepository;
 
+    /**
+     * 暂定为红包支付流程 与账户支付属于同一事务界别
+     * @param transactionContext
+     * @param tradeOrderDto
+     * @return
+     */
     @Override
     @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = MethodTransactionContextEditor.class)
     @Transactional
     public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
-
+        double a = 5/0;
         try {
-            Thread.sleep(1000l);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        System.out.println("red packet try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+        System.out.println("红包支付时间:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder foundTradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 

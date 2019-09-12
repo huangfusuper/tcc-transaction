@@ -20,23 +20,41 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Transaction implements Serializable {
 
     private static final long serialVersionUID = 7291423944314337931L;
-
+    /**
+     * 全局事务ID
+     */
     private TransactionXid xid;
-
+    /**
+     * 事务的状态，可以为TRYING，CONFIRMING，CANCELLING，分别对应tcc三个阶段
+     */
     private TransactionStatus status;
-
+    /**
+     * 事务类型，可以为ROOT，BRANCH，ROOT是主事务，BRANCH是分支事务，事务的发起方法对应主事务，其他被调用的dubbo接口在分支事务上
+     */
     private TransactionType transactionType;
-
+    /**
+     * 事务重试次数，当confirm或者cancel失败重试时增加
+     */
     private volatile int retriedCount = 0;
-
+    /**
+     * 事务的创建时间
+     */
     private Date createTime = new Date();
-
+    /**
+     * 事务最后一次更新时间
+     */
     private Date lastUpdateTime = new Date();
-
+    /**
+     * 事务的版本号，乐观锁？
+     */
     private long version = 1;
-
+    /**
+     * 事务的参与者
+     */
     private List<Participant> participants = new ArrayList<Participant>();
-
+    /**
+     * 附加参数，暂时没发现被用到
+     */
     private Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
 
     public Transaction() {
@@ -88,7 +106,9 @@ public class Transaction implements Serializable {
         this.status = status;
     }
 
-
+    /**
+     * 执行Transaction的commit或rollback方法，会对应执行所有participant的commit或rollback方法
+     */
     public void commit() {
 
         for (Participant participant : participants) {

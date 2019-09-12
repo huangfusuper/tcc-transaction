@@ -27,18 +27,24 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     @Autowired
     TradeOrderRepository tradeOrderRepository;
 
+    /**
+     * 账户支付流程    与红包支付属于同一事务级别
+     * @param transactionContext
+     * @param tradeOrderDto
+     * @return
+     */
     @Override
     @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = MethodTransactionContextEditor.class)
     @Transactional
     public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
 
         try {
-            Thread.sleep(1000l);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        System.out.println("capital try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+        System.out.println("账户支付时间:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder foundTradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
@@ -82,15 +88,15 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
         //check if the trade order status is DRAFT, if yes, return directly, ensure idempotency.
-        if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
-            tradeOrder.confirm();
-            tradeOrderRepository.update(tradeOrder);
+            if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
+                tradeOrder.confirm();
+                tradeOrderRepository.update(tradeOrder);
 
-            CapitalAccount transferToAccount = capitalAccountRepository.findByUserId(tradeOrderDto.getOppositeUserId());
+                CapitalAccount transferToAccount = capitalAccountRepository.findByUserId(tradeOrderDto.getOppositeUserId());
 
-            transferToAccount.transferTo(tradeOrderDto.getAmount());
+                transferToAccount.transferTo(tradeOrderDto.getAmount());
 
-            capitalAccountRepository.save(transferToAccount);
+                capitalAccountRepository.save(transferToAccount);
         }
     }
 

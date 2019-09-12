@@ -8,6 +8,7 @@ import org.mengyun.tcctransaction.api.TransactionXid;
 import java.io.Serializable;
 
 /**
+ * Participant是对tcc事务参与者的抽象
  * Created by changmingxie on 10/27/15.
  */
 public class Participant implements Serializable {
@@ -15,7 +16,9 @@ public class Participant implements Serializable {
     private static final long serialVersionUID = 4127729421281425247L;
 
     private TransactionXid xid;
-
+    /**
+     * 事务参与者的元数据
+     */
     private InvocationContext confirmInvocationContext;
 
     private InvocationContext cancelInvocationContext;
